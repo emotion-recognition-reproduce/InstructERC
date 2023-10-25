@@ -1,5 +1,4 @@
-source YOUR CONDA ENVS
-source YOUR DOCKER
+conda activate emotion
 
 
 # The Shellparameter that controls the mainprocess
@@ -23,8 +22,8 @@ Experiments_setting='lora'
 # select the dataset
 # dataset='test'
 # dataset='iemocap'
-# dataset='meld'
-dataset='EmoryNLP'
+dataset='meld'
+# dataset='EmoryNLP'
 
 # select the historical window for dataset
 # LLaMA 's context = 1024 is enough for almost dataset, except for iemocap.
@@ -33,8 +32,8 @@ dataset='EmoryNLP'
 historical_window=12
 
 # set the accumulation and card when backwarding and inferring
-accumulations=8
-graphics_card=4
+accumulations=4
+graphics_card=1
 BS=$((accumulations * graphics_card))
 
 # parameter that determines whether the speaker_identification task is add to train stage
@@ -148,7 +147,7 @@ then
         MODEL_PATH='LLaMA MODELPATH'
     elif [ ${MODEL_NAME} = 'LLaMA2' ]
     then
-        MODEL_PATH='LLaMA2 MODELPATH'
+        MODEL_PATH='/home/zrr/huggingface/FlagAlpha/Atom-7B-Chat'
     elif [ ${MODEL_NAME} = 'Bloom-560m' ]    
     then
         MODEL_PATH='Bloom-560m MODELPATH'
@@ -202,14 +201,14 @@ then
             echo "Processed Data_Path: $DATA_PATH"
             deepspeed --master_port=29500 main_new.py \
             --dataset ${dataset} \
-            --model_name_or_path ${MODEL_PATH} \
+            --model_name_or_path ${MODEL_NAME} \
             --data_dir ${DATA_PATH} \
             --output_dir ./experiments/${MODEL_NAME}/${Experiments_setting}/${dataset}/${speaker_task} \
             --max_length ${MAX_LENGTH} \
             --batch_size ${BS} \
-            --deepspeed_config ./code/data_utils/deepspeed_config.json \
+            --deepspeed_config ./data_utils/deepspeed_config.json \
             --gradient_accumulation_steps ${accumulations} \
-            --eval_batch_size 8 \
+            --eval_batch_size 1 \
             --num_train_epochs 6 \
             --save_steps 100000 \
             --lora ${LORA}\
@@ -244,9 +243,9 @@ then
             # --output_dir ${Speaker_Model_output_dir} \
             # --max_length ${MAX_LENGTH} \
             # --batch_size ${BS} \
-            # --deepspeed_config ./code/data_utils/deepspeed_config.json \
+            # --deepspeed_config ./data_utils/deepspeed_config.json \
             # --gradient_accumulation_steps ${accumulations} \
-            # --eval_batch_size 8 \
+            # --eval_batch_size 1 \
             # --num_train_epochs 3 \
             # --save_steps 100000 \
             # --lora ${LORA}\
@@ -270,9 +269,9 @@ then
             --output_dir ${Content_Model_output_dir} \
             --max_length ${MAX_LENGTH} \
             --batch_size ${BS} \
-            --deepspeed_config ./code/data_utils/deepspeed_config.json \
+            --deepspeed_config ./data_utils/deepspeed_config.json \
             --gradient_accumulation_steps ${accumulations} \
-            --eval_batch_size 16 \
+            --eval_batch_size 1 \
             --num_train_epochs 15 \
             --save_steps 100000 \
             --lora ${LORA}\
@@ -293,10 +292,10 @@ then
             --output_dir ./experiments/${MODEL_NAME}/${Experiments_setting}/${dataset}/demon \
             --max_length ${MAX_LENGTH} \
             --batch_size ${BS} \
-            --deepspeed_config ./code/data_utils/deepspeed_config.json \
+            --deepspeed_config ./data_utils/deepspeed_config.json \
             --gradient_accumulation_steps ${accumulations} \
-            --eval_batch_size 8 \
-            --num_train_epochs 8 \
+            --eval_batch_size 1 \
+            --num_train_epochs 2 \
             --save_steps 100000 \
             --lora ${LORA}\
             --learning_rate ${LR} \
@@ -313,9 +312,9 @@ then
             --output_dir ./experiments/${MODEL_NAME}/${Experiments_setting}/${dataset}/window_${historical_window}/LR_${LR}_BS_${BS}_per_${data_percent} \
             --max_length ${MAX_LENGTH} \
             --batch_size ${BS} \
-            --deepspeed_config ./code/data_utils/deepspeed_config.json \
+            --deepspeed_config ./data_utils/deepspeed_config.json \
             --gradient_accumulation_steps ${accumulations} \
-            --eval_batch_size 8 \
+            --eval_batch_size 1 \
             --num_train_epochs 6 \
             --save_steps 100000 \
             --lora ${LORA}\
@@ -343,9 +342,9 @@ then
             --output_dir ./experiments/${MODEL_NAME}/${Experiments_setting}/${dataset}/Predict/speaker/window_${historical_window} \
             --max_length ${MAX_LENGTH} \
             --batch_size ${BS} \
-            --deepspeed_config ./code/data_utils/deepspeed_config.json \
+            --deepspeed_config ./data_utils/deepspeed_config.json \
             --gradient_accumulation_steps ${accumulations} \
-            --eval_batch_size 8 \
+            --eval_batch_size 1 \
             --num_train_epochs 15 \
             --save_steps 100000 \
             --lora ${LORA}\
