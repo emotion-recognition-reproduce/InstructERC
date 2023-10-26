@@ -201,7 +201,7 @@ then
             echo "Processed Data_Path: $DATA_PATH"
             deepspeed --master_port=29500 main_new.py \
             --dataset ${dataset} \
-            --model_name_or_path ${MODEL_NAME} \
+            --model_name_or_path ${MODEL_PATH} \
             --data_dir ${DATA_PATH} \
             --output_dir ./experiments/${MODEL_NAME}/${Experiments_setting}/${dataset}/${speaker_task} \
             --max_length ${MAX_LENGTH} \
